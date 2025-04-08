@@ -1,3 +1,7 @@
 from django.contrib import admin
+from webapp.models import User, Question, Answer, UserPreference
 
-# Register your models here.
+admin.register(User)
+admin.register(Question)
+admin.register(Answer)
+admin.register(UserPreference)
