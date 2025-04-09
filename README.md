@@ -5,7 +5,7 @@
 * PostgreSQL 8.3+
 
 ## To Setup ats application please follow below steps:
-1. Clone the repo using command `git@github.com:Prem-Vk/quora.git`
+1. Clone the repo using command `git clone https://github.com/Prem-Vk/quora.git`
 2. Create & activate virtualenv of python using below command.
 	```
 	python3.10 -m venv venv && source venv/bin/activate
