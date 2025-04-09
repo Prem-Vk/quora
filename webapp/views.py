@@ -12,13 +12,17 @@ from django.db import transaction
 
 
 class BaseSessionView(View):
-
     def check_user_already_active_session(self, request):
         if hasattr(request, "user"):
             if request.user.is_authenticated:
                 return redirect("webapp:home_page")
 
 class UserLoginView(BaseSessionView):
+    """_summary_
+    User login view:
+        - show login page to user.
+        - Autheticate and login user.
+    """
     def post(self, request):
         form = UserLoginForm(request.POST)
         if form.is_valid():
@@ -43,6 +47,10 @@ class UserLoginView(BaseSessionView):
 
 
 class UserRegistrationView(BaseSessionView):
+    """_summary_
+        - user sign up page.
+        - Registration of a user.
+    """
     def post(self, request):
         registration_form = UserResgistrationForm(request.POST)
         if registration_form.is_valid():
@@ -66,6 +74,10 @@ class UserRegistrationView(BaseSessionView):
 
 
 class QuestionView(BaseSessionView):
+    """_summary_
+        - GET - Show a question with all answers and like,unlike count.
+        - POST - To submit a question.
+    """
     def get(self, request, pk=None):
         if pk:
             question = Question.objects.get(pk=pk)
@@ -98,6 +110,10 @@ class QuestionView(BaseSessionView):
 
 
 class AnswerView(BaseSessionView):
+    """
+    - get a answer page.
+    - Submit a answer for a particular question.
+    """
     def get(self, request, question_id=None):
         question = Question.objects.values("question_text", "description" ,"pk").get(pk=question_id)
         return render(request, "writeaanswer.html", {"question": question})
@@ -120,6 +136,9 @@ class AnswerView(BaseSessionView):
             return HttpResponse(answer_form.errors)
 
 def home_view(request):
+    """_summary_
+        Home page with all the questions asked by every users, with answer count.
+    """
     template_name = "home.html"
     if hasattr(request, "user"):
         if request.user.is_authenticated:
@@ -129,11 +148,17 @@ def home_view(request):
 
 
 def logout_user(request):
+    """_summary_
+        logout a user.
+    """
     logout(request)
     return redirect(reverse("webapp:login_page"))
 
 
 class UserPreferenceView(BaseSessionView):
+    """_summary_
+    View to handle to like & dislike for each answer.
+    """
     LIKE, DISLIKE = "like", "dislike"
 
     def _update_like_dislike(self, preference: UserPreference, condition, opposite_condition):

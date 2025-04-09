@@ -6,4 +6,5 @@ class WebappConfig(AppConfig):
     name = 'webapp'
 
     def ready(self):
+        # For Signals
         import webapp.signals

@@ -9,11 +9,11 @@
 {% block content %}
 <nav class="navbar">
     <div class="nav-container">
-        <a href="#" class="navbar-brand">Quora</a>
+        <a href="{% url 'webapp:home_page' %}" class="navbar-brand">Quora</a>
         <ul class="nav-links">
             <li><a href="{% url 'webapp:home_page' %}">Home</a></li>
-            <li><a href="{% url "webapp:questions" %}">Ask a Question</a></li>
-            <li><a href="#">Logout</a></li>
+            <li><a href="{% url 'webapp:questions' %}">Ask a Question</a></li>
+            <li><a href="{% url 'webapp:logout' %}">Logout</a></li>
         </ul>
     </div>
 </nav>

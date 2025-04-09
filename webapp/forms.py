@@ -9,6 +9,16 @@ class UserLoginForm(forms.Form):
 
 
 class UserResgistrationForm(forms.ModelForm):
+    """_summary_
+    User Registration modelform.
+
+    Raises:
+        forms.ValidationError: if a user with same username or email already exists.
+        forms.ValidationError: If registration password doesn't matches
+
+    Returns:
+        _type_: validated modelform
+    """
     password2 = forms.CharField(
         min_length=8,
         label="",
@@ -54,6 +64,14 @@ class UserResgistrationForm(forms.ModelForm):
 
 
 class QuestionForm(forms.ModelForm):
+    """_summary_
+
+    Raises:
+        forms.ValidationError: IF same question already asked before.
+
+    Returns:
+        _type_: Validated QuestionForm
+    """
     class Meta:
         model = Question
         fields = ('question_text', 'description')
