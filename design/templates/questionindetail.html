@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load humanize %}
+{% block title %}Quora - Home{% endblock title %}
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/home.css' %}">
+{% endblock css %}
+
+{% block content %}
+<nav class="navbar">
+    <div class="nav-container">
+        <a href="#" class="navbar-brand">Quora</a>
+        <ul class="nav-links">
+            <li><a href="{% url 'webapp:home_page' %}">Home</a></li>
+            <li><a href="{% url "webapp:questions" %}">Ask a Question</a></li>
+            <li><a href="#">Logout</a></li>
+        </ul>
+    </div>
+</nav>
+
+<div class="container">
+
+        <article class="blog-post">
+            <h1><a href="{% url 'webapp:question' question.pk %}">{{ question.question_text }}</a></h1>
+            <p>Total Answers:- {{ question.answer_count }}</p>
+            <div class="post-meta">
+                <span>By {{ question.user.username }}</span> | <span>{{ question.created_at|date:"F j, Y"}}</span>
+            </div>
+            <p>{{ question.description }}</p>
+            {% if user_owned_question %}
+                <p style="color: red"> You can't answer your own question right!! </p>
+            {% elif answered_by_user == False %}
+                <p><a href="{% url 'webapp:answer' question.pk %}">Answer this question?</a></p>
+            {% else %}
+                <p style="color: red"> You have already answered this question </p>
+            {% endif %}
+        </article>
+
+        <section class="comments-section">
+            <h2>{{ question.answer_count }} Answers/comments</h2>
+        {% for answer in  answers %}
+            <article class="comment">
+                <div class="comment-meta">
+                    <strong>{{ answer.user.username }}</strong> - <span>{{ answer.created_at|date:"F j, Y" }}</span>
+                </div>
+                <p class="comment-body">{{ answer.content }}</p>
+                <div class="comment-actions">
+                    <a href="{% url 'webapp:reaction' reaction='like' answer_id=answer.pk %}"><button class="like-button" aria-label="Like this comment">👍</button></a>
+                    <span class="like-count">{{ answer.like_count }}</span>
+                    <a href="{% url 'webapp:reaction' reaction='dislike' answer_id=answer.pk %}"><button class="dislike-button" aria-label="Dislike this comment">👎</button></a>
+                    <span class="dislike-count">{{ answer.dislike_count }}</span>
+                </div>
+            </article>
+
+        {% endfor %}
+        </section>
+
+</div>
+{% endblock content %}

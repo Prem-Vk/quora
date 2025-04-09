@@ -1,5 +1,5 @@
 from django import forms
-from webapp.models import User, Question
+from webapp.models import User, Question, Answer, UserPreference
 from django.db.models import Q
 from django.utils.text import slugify
 
@@ -63,3 +63,10 @@ class QuestionForm(forms.ModelForm):
         if Question.objects.filter(question_slug=slugify(question_text)).exists():
             raise forms.ValidationError("Question Already Exists!!")
         return question_text
+
+
+class AnswerForm(forms.ModelForm):
+    question_id = forms.IntegerField()
+    class Meta:
+        model = Answer
+        fields = ('content',)

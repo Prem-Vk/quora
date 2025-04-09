@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
-{% block title %}Quora - Home{% endblock title %}
+{% block title %}Quora{% endblock title %}
 {% block css %}
 <style>
     body {
@@ -200,9 +200,8 @@
         <div class="nav-container">
             <a href="#" class="navbar-brand">Quora</a>
             <ul class="nav-links">
-                <li><a href="#">Home</a></li>
-                <li><a href="#">My Questions</a></li>
-                <li><a href="#">Ask a Question</a></li>
+                <li><a href="{% url 'webapp:home_page' %}">Home</a></li>
+                <li><a href="{% url "webapp:questions" %}">Ask a Question</a></li>
                 <li><a href="#">Logout</a></li>
             </ul>
         </div>
@@ -236,8 +235,10 @@
             </p>
         </div>
     </article> {% endcomment %}
+    {% block question_answer %}
+    <h1> Asking a question?</h1>
     <div class="question-form-container">
-        <form action="#" method="post">
+        <form action="" method="post">
             <div class="form-group">
             {% csrf_token %}
                 <label for="question-input">Your Question {% if errors %} has errors {{ form_errors }} {% endif %}</label>
@@ -261,5 +262,6 @@
                 <button type="submit">Ask Question</button>
             </div>
         </form>
+    {% endblock question_answer %}
 
 {% endblock content %}

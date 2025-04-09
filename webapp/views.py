@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.views.generic import View
-from webapp.forms import UserLoginForm, UserResgistrationForm, QuestionForm
+from webapp.forms import UserLoginForm, UserResgistrationForm, QuestionForm, AnswerForm
 from django.contrib.auth import authenticate, login, logout
 from webapp.models import User, Question, Answer, UserPreference
 from django.shortcuts import HttpResponse, render, redirect
@@ -8,6 +8,7 @@ from django.contrib.auth.decorators import login_required
 from django.urls import reverse
 from django.db.models import Count
 from django.utils.text import slugify
+from django.db import transaction
 
 
 class BaseSessionView(View):
@@ -19,7 +20,6 @@ class BaseSessionView(View):
 
 class UserLoginView(BaseSessionView):
     def post(self, request):
-        self.check_user_already_active_session(request)
         form = UserLoginForm(request.POST)
         if form.is_valid():
             data = form.cleaned_data
@@ -37,13 +37,13 @@ class UserLoginView(BaseSessionView):
             return HttpResponse(form.errors)
 
     def get(self, request):
+        self.check_user_already_active_session(request)
         template_name = "session/login.html"
         return render(request, template_name)
 
 
 class UserRegistrationView(BaseSessionView):
     def post(self, request):
-        self.check_user_already_active_session(request)
         registration_form = UserResgistrationForm(request.POST)
         if registration_form.is_valid():
             new_user: User = registration_form.save(commit=False)
@@ -60,6 +60,7 @@ class UserRegistrationView(BaseSessionView):
             )
 
     def get(self, request):
+        self.check_user_already_active_session(request)
         registration_form = UserResgistrationForm()
         return render(request, "session/registration.html", {"registration_form": registration_form})
 
@@ -68,8 +69,20 @@ class QuestionView(BaseSessionView):
     def get(self, request, pk=None):
         if pk:
             question = Question.objects.get(pk=pk)
-            answers = question.answers.all()
-            return render(request, "questionindetail.html", {"question": question, "answers": answers})
+            answers = question.answers.select_related("user").order_by('created_at').all()
+            user_already_answered = Answer.objects.filter(
+                user=request.user, question=question
+            ).exists()
+            return render(
+                request,
+                "questionindetail.html",
+                {
+                    "question": question,
+                    "answers": answers,
+                    "answered_by_user": user_already_answered,
+                    "user_owned_question": request.user == question.user,
+                },
+            )
         else:
             return render(request, "askaquestion.html")
     def post(self, request, pk=None):
@@ -83,6 +96,29 @@ class QuestionView(BaseSessionView):
         else:
             return render(request, "askaquestion.html", {"form_errors": question_form.errors})
 
+
+class AnswerView(BaseSessionView):
+    def get(self, request, question_id=None):
+        question = Question.objects.values("question_text", "description" ,"pk").get(pk=question_id)
+        return render(request, "writeaanswer.html", {"question": question})
+
+    def post(self, request, question_id=None):
+        print("HIT TOH HUAAA HAI BHAIII")
+        answer_form = AnswerForm(request.POST)
+        if answer_form.is_valid():
+            with transaction.atomic():
+                question_id = answer_form.cleaned_data.pop("question_id")
+                question = Question.objects.get(pk=question_id)
+                answer: Answer = answer_form.save(commit=False)
+                answer.user, answer.question = request.user, question
+                answer.save()
+                question.answer_count += 1
+                question.save()
+            return redirect(reverse("webapp:question",  kwargs={"pk": question_id}))
+        else:
+            print(answer_form.errors)
+            return HttpResponse(answer_form.errors)
+
 def home_view(request):
     template_name = "home.html"
     if hasattr(request, "user"):
@@ -95,3 +131,30 @@ def home_view(request):
 def logout_user(request):
     logout(request)
     return redirect(reverse("webapp:login_page"))
+
+
+class UserPreferenceView(BaseSessionView):
+    LIKE, DISLIKE = "like", "dislike"
+
+    def _update_like_dislike(self, preference: UserPreference, condition, opposite_condition):
+        updated_fields = ['updated_at']
+        if not getattr(preference, condition):
+            setattr(preference, condition, True)
+            updated_fields.append(condition)
+        if getattr(preference, opposite_condition):
+            setattr(preference, opposite_condition, False)
+            updated_fields.append(opposite_condition)
+        preference.save(update_fields=updated_fields)
+
+    def get(self, request, reaction, answer_id):
+        answer = Answer.objects.get(pk=answer_id)
+        preference, created = UserPreference.objects.get_or_create(user=request.user, answer=answer)
+        if created:
+            setattr(preference, reaction, True)
+            preference.save(update_fields=[reaction, "updated_at"])
+        else:
+            if reaction == self.LIKE:
+                self._update_like_dislike(preference, self.LIKE, self.DISLIKE)
+            elif reaction == self.DISLIKE:
+                self._update_like_dislike(preference, self.DISLIKE, self.LIKE)
+        return redirect(reverse("webapp:question",  kwargs={"pk": answer.question.pk}))

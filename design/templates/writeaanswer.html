@@ -1,0 +1,29 @@
+{% extends "askaquestion.html" %}
+{% block question_answer %}
+<h1> Answering a question. </h1>
+<div class="question-form-container">
+    <form action="" method="post">
+        <div class="form-group">
+        {% csrf_token %}
+            <label for="question-input">Question:-</label>
+            <textarea id="question-input" rows="1" style="background-color: lightgray;" readonly disable>{{ question.question_text }}</textarea> </div>
+            <div class="form-group">
+                <label for="description-input">Description:-</label>
+                <textarea id="description-input" rows="6" style="background-color: lightgray;" readonly disable>{{ question.description }}</textarea>
+            </div>
+        <input type="hidden" name="question_id", value={{ question.pk }}>
+
+        <div class="form-group">
+            <label for="description-input">Answer</label>
+            <textarea id="description-input"
+                        name="content"
+                        rows="4"
+                        placeholder="Your Answer Plzzz..."></textarea>
+        </div>
+
+        <div class="button-group">
+            <button type="reset">Clear</button>
+            <button type="submit">submit Answer</button>
+        </div>
+    </form>
+{% endblock question_answer %}

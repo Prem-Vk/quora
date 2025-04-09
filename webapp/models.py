@@ -1,7 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from cloudinary.models import CloudinaryField
-from django.core.validators import MaxValueValidator
 from django.contrib.auth.models import PermissionsMixin
 
 
@@ -47,6 +46,9 @@ class Answer(models.Model):
     content = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    # we can also store this in a cache db using redis cache using django caches as it can be eventual consistent.
+    # used this for saving time
+    # updating this using signals as it can be evential consistent we can use celery for a cron job to upate this periodically.
     like_count = models.PositiveIntegerField(default=0)
     dislike_count = models.PositiveIntegerField(default=0)
 
@@ -56,8 +58,9 @@ class Answer(models.Model):
 
 class UserPreference(models.Model):
     user = models.ForeignKey(User, on_delete=models.PROTECT)
-    answer = models.ForeignKey(Answer, on_delete=models.PROTECT)
-    reaction = models.BooleanField(null=True, blank=True)
+    answer = models.ForeignKey(Answer, on_delete=models.PROTECT, related_name="preferences")
+    like = models.BooleanField(default=False)
+    dislike = models.BooleanField(default=False)
     updated_at = models.DateTimeField(auto_now=True)
 
     def _user_preference_status(self):
@@ -69,3 +72,11 @@ class UserPreference(models.Model):
 
     def __str__(self):
         return f"{self.user.username} {self._user_preference_status} answer: {self.answer}"
+
+    class Meta:
+        constraints = [
+            # An Answer can only be answered once by a user.
+            models.UniqueConstraint(fields=['user', 'answer'], name='unique_user_answer'),
+            # User can't like & dislike same answer, it has to be only one.
+            models.CheckConstraint(check=~models.Q(like=True, dislike=True), name="not_both_true"),
+        ]
