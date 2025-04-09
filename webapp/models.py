@@ -22,8 +22,9 @@ class User(AbstractUser, PermissionsMixin):
 
 
 class Question(models.Model):
-    user_id = models.ForeignKey(User, on_delete=models.PROTECT)
-    question_text = models.TextField(max_length=500, unique=True)
+    user = models.ForeignKey(User, on_delete=models.PROTECT)
+    question_text = models.CharField(max_length=255, unique=True)
+    description = models.TextField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     question_slug = models.SlugField(
@@ -41,24 +42,22 @@ class Question(models.Model):
 
 
 class Answer(models.Model):
-    user_id = models.ForeignKey(User, on_delete=models.PROTECT)
-    question_id = models.ForeignKey(Question, on_delete=models.PROTECT)
+    user = models.ForeignKey(User, on_delete=models.PROTECT)
+    question = models.ForeignKey(Question, on_delete=models.PROTECT, related_name="answers")
     content = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    preferences = models.ManyToManyField(
-        User, through="UserPreference", related_name="preference"
-    )
+    like_count = models.PositiveIntegerField(default=0)
+    dislike_count = models.PositiveIntegerField(default=0)
 
     def __str__(self):
         return f"{self.content[0:100]}"
 
 
 class UserPreference(models.Model):
-    user_id = models.ForeignKey(User, on_delete=models.PROTECT)
-    answer_id = models.ForeignKey(Answer, on_delete=models.PROTECT)
-    is_liked = models.BooleanField(null=True, blank=True)
-    is_disliked = models.BooleanField(null=True, blank=True)
+    user = models.ForeignKey(User, on_delete=models.PROTECT)
+    answer = models.ForeignKey(Answer, on_delete=models.PROTECT)
+    reaction = models.BooleanField(null=True, blank=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     def _user_preference_status(self):
@@ -69,4 +68,4 @@ class UserPreference(models.Model):
         return "Has no preference on"
 
     def __str__(self):
-        return f"{self.user_id.username} {self._user_preference_status} answer: {self.answer_id}"
+        return f"{self.user.username} {self._user_preference_status} answer: {self.answer}"

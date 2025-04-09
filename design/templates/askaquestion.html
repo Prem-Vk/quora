@@ -1,0 +1,265 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Quora - Home{% endblock title %}
+{% block css %}
+<style>
+    body {
+        font-family: sans-serif;
+        line-height: 1.6;
+        margin: 0; /* Remove default body margin */
+        padding: 0; /* Reset padding, navbar will handle its own */
+        background-color: #fdfdfd;
+        color: #333;
+      }
+      .navbar {
+        background-color: #f8f8f8; /* Light grey background for navbar */
+        padding: 10px 0;         /* Vertical padding */
+        border-bottom: 1px solid #eee; /* Separator line */
+        margin-bottom: 20px;     /* Space below navbar */
+      }
+      
+      .nav-container {
+        max-width: 800px;        /* Max width to align with main content */
+        margin: 0 auto;         /* Center the container */
+        padding: 0 15px;        /* Padding inside the container */
+        display: flex;          /* Use flexbox for layout */
+        justify-content: space-between; /* Logo left, links right */
+        align-items: center;    /* Vertically center items */
+      }
+      
+      .navbar-brand {
+        font-size: 1.5em;       /* Larger size for logo */
+        font-weight: bold;
+        color: #d93025;         /* Quora-like red color */
+        text-decoration: none;
+      }
+      .navbar-brand:hover {
+        color: #b0261c;
+      }
+      
+      .nav-links {
+        list-style: none;       /* Remove bullet points */
+        margin: 0;
+        padding: 0;
+        display: flex;          /* Arrange links horizontally */
+        gap: 20px;              /* Space between links */
+      }
+      
+      .nav-links li {
+        /* No specific styles needed for li if using gap on ul */
+      }
+      
+      .nav-links a {
+        color: #333;
+        text-decoration: none;
+        font-size: 0.95em;
+      }
+      .nav-links a:hover {
+        color: #d93025;        /* Highlight on hover */
+        text-decoration: underline;
+      }
+      
+      
+      /* --- Main Content Area --- */
+      .container {
+        max-width: 800px;
+        margin: 0 auto;
+        background-color: #fff;
+        padding: 20px 30px;
+        border: 1px solid #eee;
+        /* Removed top padding/margin as navbar provides space */
+      }
+
+    .question-card {
+        background-color: #ffffff;     /* White background for the card */
+        border: 1px solid #e0e0e0;     /* Subtle border */
+        border-radius: 8px;            /* Rounded corners */
+        padding: 25px;                 /* Inner spacing */
+        margin-bottom: 25px;           /* Space between question cards */
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05); /* Subtle shadow for depth */
+    }
+
+    /* Styling for the question title */
+    .question-title {
+        font-size: 1.5em;              /* Make the title stand out */
+        font-weight: 600;              /* Slightly bolder than normal */
+        color: #212529;                /* Darker color for the title */
+        margin-top: 0;                 /* Remove default top margin */
+        margin-bottom: 15px;           /* Space below the title */
+    }
+
+    /* Styling for the description area */
+    .question-description {
+        font-size: 1em;                /* Standard font size for description */
+        color: #555;                   /* Slightly lighter text color for description */
+    }
+
+    /* Ensure paragraphs within the description have appropriate spacing */
+    .question-description p {
+        margin-top: 0;
+        margin-bottom: 10px; /* Space between paragraphs */
+    }
+
+    /* Remove bottom margin from the last paragraph in the description */
+    .question-description p:last-child {
+        margin-bottom: 0;
+    }
+/* kabdckjbsadcjk sdchsodc  */
+    /* Form Container */
+        .question-form-container {
+            background-color: #ffffff; /* White card background */
+            padding: 30px 35px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            width: 100%; /* Take full width available */
+            max-width: 600px; /* Limit maximum width */
+        }
+
+        /* Form Elements Styling */
+        .form-group {
+            margin-bottom: 20px; /* Space between input groups */
+        }
+
+        label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #5c5c5c;
+            font-size: 0.95em;
+        }
+
+        textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #dcdcdc;
+            border-radius: 5px;
+            font-family: inherit; /* Use body font */
+            font-size: 1em;
+            line-height: 1.4;
+            resize: vertical; /* Allow vertical resize, disable horizontal */
+            min-height: calc(1.4em * var(--rows, 2) + 26px); /* Calculate min-height based on rows + padding/border */
+            transition: border-color 0.2s ease;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: #88aaff; /* Subtle focus highlight */
+            box-shadow: 0 0 0 2px rgba(136, 170, 255, 0.2);
+        }
+
+        /* Specific row styling (using CSS variable for height calculation) */
+        textarea#question-input {
+            --rows: 2;
+            font-weight: 500; /* Make question slightly bolder */
+        }
+
+        textarea#description-input {
+            --rows: 5;
+        }
+
+        /* Button Group */
+        .button-group {
+            display: flex;
+            justify-content: flex-end; /* Align buttons to the right */
+            gap: 10px; /* Space between buttons */
+            margin-top: 25px;
+        }
+
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 20px; /* Pill-shaped buttons */
+            font-weight: 600;
+            font-size: 0.9em;
+            cursor: pointer;
+            transition: background-color 0.2s ease, opacity 0.2s ease;
+        }
+
+        button[type="submit"] {
+            background-color: #2e69ff; /* Quora-like blue */
+            color: white;
+        }
+
+        button[type="submit"]:hover {
+            background-color: #1a58e8;
+        }
+
+        button[type="reset"] {
+            background-color: #e0e0e0; /* Light gray */
+            color: #5c5c5c;
+        }
+
+        button[type="reset"]:hover {
+           background-color: #d1d1d1;
+        }
+</style>
+{% endblock css %}
+
+{% block content %}
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="#" class="navbar-brand">Quora</a>
+            <ul class="nav-links">
+                <li><a href="#">Home</a></li>
+                <li><a href="#">My Questions</a></li>
+                <li><a href="#">Ask a Question</a></li>
+                <li><a href="#">Logout</a></li>
+            </ul>
+        </div>
+    </nav>
+    {% comment %} <article class="question-card">
+        <h2 class="question-title">
+            How can I center a div both horizontally and vertically using CSS?
+        </h2>
+        <div class="question-description">
+            <p>
+                I've been trying different methods like margin auto, text-align, and line-height,
+                but I'm looking for a reliable and modern way to perfectly center a
+                `div` element within its parent container, regardless of the div's size.
+                What are the recommended techniques using Flexbox or Grid?
+            </p>
+            <p>
+                Could you provide simple code examples for both methods?
+            </p>
+        </div>
+    </article>
+
+    <article class="question-card">
+        <h2 class="question-title">
+            What is the difference between `let`, `const`, and `var` in JavaScript?
+        </h2>
+        <div class="question-description">
+            <p>
+                I understand they are used for variable declaration, but what are the specific
+                differences in terms of scope, hoisting, and re-assignability? When should I
+                prefer one over the others in modern JavaScript development?
+            </p>
+        </div>
+    </article> {% endcomment %}
+    <div class="question-form-container">
+        <form action="#" method="post">
+            <div class="form-group">
+            {% csrf_token %}
+                <label for="question-input">Your Question {% if errors %} has errors {{ form_errors }} {% endif %}</label>
+                <textarea id="question-input"
+                          name="question_text"
+                          rows="2"
+                          placeholder="Start your question with 'What', 'How', 'Why', etc. Be specific."
+                          required
+                          maxlength="250"></textarea> </div>
+
+            <div class="form-group">
+                <label for="description-input">Description (Optional)</label>
+                <textarea id="description-input"
+                          name="description"
+                          rows="5"
+                          placeholder="Provide more context, details, or background to help others answer your question."></textarea>
+            </div>
+
+            <div class="button-group">
+                <button type="reset">Clear</button>
+                <button type="submit">Ask Question</button>
+            </div>
+        </form>
+
+{% endblock content %}

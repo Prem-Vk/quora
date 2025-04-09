@@ -1,21 +1,80 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load humanize %}
 {% block title %}Quora - Home{% endblock title %}
 {% block css %}
 <link rel="stylesheet" href="{% static 'css/home.css' %}">
 {% endblock css %}
 
 {% block content %}
-<nav>
-    <label class="logo">Quora</label>
-    <ul>
-        <li><a class="active" href="#">Home</a></li>
-        <li><a href="#">My Questions</a></li>
-        <li><a href="#">Ask a question</a></li>
-        <li><a href="#">Profile</a></li>
-        <li><a href="{% url "webapp:logout" %}">Logout</a></li>
-    </ul>
+<nav class="navbar">
+    <div class="nav-container">
+        <a href="#" class="navbar-brand">Quora</a>
+        <ul class="nav-links">
+            <li><a href="#">Home</a></li>
+            <li><a href="#">My Questions</a></li>
+            <li><a href="#">Ask a Question</a></li>
+            <li><a href="#">Logout</a></li>
+        </ul>
+    </div>
 </nav>
-<!-- Section for image -->
-<section></section>
+
+<div class="container">
+
+    {% for question in all_questions%}
+        <article class="blog-post">
+            <h1><a href="{% url 'webapp:question' question.pk %}">{{ question.question_text }}</a></h1>
+            <p>Total Answers:- {{ question.answer_count }}</p>
+            <div class="post-meta">
+                <span>By {{ question.user.username }}</span> | <span>{{ question.created_at|date:"F j, Y"}}</span>
+            </div>
+            <p>{{ question.description }}</p>
+        </article>
+    {% endfor %}
+
+    {% comment %} <section class="comments-section">
+        <h2>Comments</h2>
+
+        <article class="comment">
+            <div class="comment-meta">
+                <strong>Commenter One</strong> - <span>April 9, 2025</span>
+            </div>
+            <p class="comment-body">This is the first comment. I agree with the points made in the article!</p>
+            <div class="comment-actions">
+                <button class="like-button" aria-label="Like this comment">👍</button>
+                <span class="like-count">15</span>
+                <button class="dislike-button" aria-label="Dislike this comment">👎</button>
+                <span class="dislike-count">2</span>
+            </div>
+        </article>
+
+        <article class="comment">
+            <div class="comment-meta">
+                <strong>Commenter Two</strong> - <span>April 9, 2025</span>
+            </div>
+            <p class="comment-body">Interesting perspective. I hadn't thought about it that way before. Thanks for sharing.</p>
+            <div class="comment-actions">
+                <button class="like-button" aria-label="Like this comment">👍</button>
+                <span class="like-count">8</span>
+                <button class="dislike-button" aria-label="Dislike this comment">👎</button>
+                <span class="dislike-count">0</span>
+            </div>
+        </article>
+
+         <article class="comment">
+            <div class="comment-meta">
+                <strong>Another User</strong> - <span>April 9, 2025</span>
+            </div>
+            <p class="comment-body">Just leaving a test comment here.</p>
+            <div class="comment-actions">
+                <button class="like-button" aria-label="Like this comment">👍</button>
+                <span class="like-count">0</span>
+                <button class="dislike-button" aria-label="Dislike this comment">👎</button>
+                <span class="dislike-count">1</span>
+            </div>
+        </article>
+
+        </section> {% endcomment %}
+
+</div>
 {% endblock content %}

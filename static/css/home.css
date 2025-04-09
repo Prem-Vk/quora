@@ -1,105 +1,147 @@
-/* Google Fonts Link */
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
-* {
-  padding: 0;
-  margin: 0;
-  text-decoration: none;
-  list-style: none;
-  box-sizing: border-box;
-}
+/* --- Basic Reset & Body --- */
 body {
-  font-family: "Montserrat", sans-serif;
+  font-family: sans-serif;
+  line-height: 1.6;
+  margin: 0; /* Remove default body margin */
+  padding: 0; /* Reset padding, navbar will handle its own */
+  background-color: #fdfdfd;
+  color: #333;
 }
-nav {
-  background: #0082e6;
-  height: 80px;
-  width: 100%;
+
+/* --- Navbar Styles --- */
+.navbar {
+  background-color: #f8f8f8; /* Light grey background for navbar */
+  padding: 10px 0;         /* Vertical padding */
+  border-bottom: 1px solid #eee; /* Separator line */
+  margin-bottom: 20px;     /* Space below navbar */
 }
-label.logo {
-  color: white;
-  font-size: 25px;
-  line-height: 80px;
-  padding: 0 100px;
+
+.nav-container {
+  max-width: 800px;        /* Max width to align with main content */
+  margin: 0 auto;         /* Center the container */
+  padding: 0 15px;        /* Padding inside the container */
+  display: flex;          /* Use flexbox for layout */
+  justify-content: space-between; /* Logo left, links right */
+  align-items: center;    /* Vertically center items */
+}
+
+.navbar-brand {
+  font-size: 1.5em;       /* Larger size for logo */
   font-weight: bold;
+  color: #d93025;         /* Quora-like red color */
+  text-decoration: none;
 }
-nav ul {
-  float: right;
-  margin-right: 20px;
+.navbar-brand:hover {
+  color: #b0261c;
 }
-nav ul li {
-  display: inline-block;
-  line-height: 80px;
-  margin: 0 5px;
+
+.nav-links {
+  list-style: none;       /* Remove bullet points */
+  margin: 0;
+  padding: 0;
+  display: flex;          /* Arrange links horizontally */
+  gap: 20px;              /* Space between links */
 }
-nav ul li a {
-  color: white;
-  font-size: 17px;
-  padding: 7px 13px;
-  border-radius: 3px;
-  text-transform: uppercase;
+
+.nav-links li {
+  /* No specific styles needed for li if using gap on ul */
 }
-a.active,
-a:hover {
-  background: #1b9bff;
-  transition: .5s;
+
+.nav-links a {
+  color: #333;
+  text-decoration: none;
+  font-size: 0.95em;
 }
-.checkbtn {
-  font-size: 22px;
-  color: white;
-  float: right;
-  line-height: 80px;
-  margin-right: 30px;
+.nav-links a:hover {
+  color: #d93025;        /* Highlight on hover */
+  text-decoration: underline;
+}
+
+
+/* --- Main Content Area --- */
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+  background-color: #fff;
+  padding: 20px 30px;
+  border: 1px solid #eee;
+  /* Removed top padding/margin as navbar provides space */
+}
+
+/* --- Blog Post --- */
+.blog-post h1 {
+  font-size: 1.8em;
+  margin-bottom: 10px;
+}
+
+.post-meta {
+  font-size: 0.9em;
+  color: #777;
+  margin-bottom: 20px;
+}
+
+.blog-post p {
+  margin-bottom: 15px;
+}
+
+/* --- Comments Section --- */
+.comments-section {
+  margin-top: 40px;
+  border-top: 1px solid #eee;
+  padding-top: 20px;
+}
+
+.comments-section h2 {
+  font-size: 1.4em;
+  margin-bottom: 20px;
+}
+
+/* --- Individual Comment --- */
+.comment {
+  border-bottom: 1px solid #f0f0f0;
+  padding: 15px 0;
+}
+.comment:last-child {
+  border-bottom: none;
+}
+
+.comment-meta {
+  font-size: 0.85em;
+  color: #555;
+  margin-bottom: 5px;
+}
+.comment-meta strong {
+ color: #333;
+}
+
+.comment-body {
+  margin-bottom: 10px;
+}
+
+/* --- Comment Actions (Like/Dislike) --- */
+.comment-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.85em;
+}
+
+.comment-actions button {
+  background: none;
+  border: 1px solid #ccc;
+  padding: 3px 8px;
   cursor: pointer;
-  display: none;
+  border-radius: 3px;
+  color: #333;
+  font-size: inherit;
+  margin-right: 4px;
 }
-#check {
-  display: none;
+.comment-actions button:hover {
+   border-color: #999;
 }
-@media (max-width: 1050px) {
-  label.logo {
-    padding-left: 30px;
-  }
-  nav ul li a {
-    font-size: 16px;
-  }
-}
-/* Responsive media query code for small screen */
-@media (max-width: 890px) {
-  .checkbtn {
-    display: block;
-  }
-  label.logo {
-    font-size: 22px;
-  }
-  ul {
-    position: fixed;
-    width: 100%;
-    height: 100vh;
-    background: #2c3e50;
-    top: 80px;
-    left: -100%;
-    text-align: center;
-    transition: all .5s;
-  }
-  nav ul li {
-    display: block;
-    margin: 50px 0;
-    line-height: 30px;
-  }
-  nav ul li a {
-    font-size: 20px;
-  }
-  a:hover,
-  a.active {
-    background: none;
-    color: #0082e6;
-  }
-  #check:checked~ul {
-    left: 0;
-  }
-}
-section {
-  background: url("bg.jpg") no-repeat;
-  background-size: cover;
-  height: calc(100vh - 80px);
+
+.like-count, .dislike-count {
+  font-weight: bold;
+  color: #555;
+  min-width: 10px;
 }

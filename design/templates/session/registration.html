@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Create an account{% endblock title %}
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/register.css' %}">
+{% endblock css %}
+{% block content %}
+<section class="container">
+    <div class="header">
+        <h1>Quora</h1>
+        {% if registration_form.errors %}
+            <p>{{ registration_form.errors }}</p>
+        {% endif %}
+    </div>
+    <div class="register">
+        <form method="post" class="register-form">
+            {{registration_form.as_p}}
+            {% csrf_token %}
+        <p><input type="submit" value="Create my account"></p>
+        </form>
+        <hr>
+        <a href="{% url 'webapp:login_page' %}" class="no-margin"><button type="submit">Login</button></a>
+    </div>
+</section>
+{% endblock content %}
