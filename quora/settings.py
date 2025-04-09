@@ -33,8 +33,10 @@ ALLOWED_HOSTS = []
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
-STATIC_ROOT = BASE_DIR / 'static'
-STATIC_URL = '/static/'
+if not DEBUG:
+    STATIC_ROOT = BASE_DIR / 'static'
+STATIC_URL = 'static/'
+STATICFILES_DIRS = [BASE_DIR / "static",]
 
 # Application definition
 
@@ -64,7 +66,7 @@ ROOT_URLCONF = 'quora.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [str(BASE_DIR) + '/design/templates/'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -91,6 +93,7 @@ DATABASES = {
         conn_health_checks=True,
     )
 }
+AUTHENTICATION_BACKENDS = ['webapp.backends.CaseInsensitiveUserModelBackend']
 
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators

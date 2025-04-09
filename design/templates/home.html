@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Quora - Home{% endblock title %}
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/home.css' %}">
+{% endblock css %}
+
+{% block content %}
+<nav>
+    <label class="logo">Quora</label>
+    <ul>
+        <li><a class="active" href="#">Home</a></li>
+        <li><a href="#">My Questions</a></li>
+        <li><a href="#">Ask a question</a></li>
+        <li><a href="#">Profile</a></li>
+        <li><a href="{% url "webapp:logout" %}">Logout</a></li>
+    </ul>
+</nav>
+<!-- Section for image -->
+<section></section>
+{% endblock content %}
